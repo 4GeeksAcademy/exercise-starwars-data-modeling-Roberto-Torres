@@ -40,10 +40,10 @@ class People(Base):
     created = Column(String(100), nullable=False) 
     edited = Column(String(100), nullable=False) 
     url = Column(String(500), nullable=False)
-    films = []
-    species = []
-    starships = []
-    vehicles = []
+    films = Column(String(500), nullable=False)
+    species = Column(String(100), nullable=False)
+    starships = Column(String(500), nullable=False)
+    vehicles = Column(String(100), nullable=False)
 
 class Vehicles(Base):
     __tablename__ = 'vehicles'
