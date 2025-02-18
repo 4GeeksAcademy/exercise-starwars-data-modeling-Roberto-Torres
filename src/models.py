@@ -10,7 +10,6 @@ class User(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    favorites_id = Column(Integer, ForeignKey('favorites.id'))
     email = Column(String(75), nullable=False)
     password = Column(String(100), nullable=False)
     username = Column(String(75), nullable=False)
@@ -18,16 +17,12 @@ class User(Base):
     last_name = Column(String(75), nullable=False)
     phone = Column(String(75), nullable=False)
     subscription_date = Column(String(50), nullable=False)
-    people = relationship('People', backref= 'user')
-    vehicles = relationship('Vehicles', backref= 'user')
-    planets = relationship('Planets', backref= 'user')
+    favorites = relationship('Favorites', backref= 'user')
 
 class People(Base):
     __tablename__ = 'people'
 
     id = Column(Integer, primary_key=True)
-    favorites_id = Column(Integer, ForeignKey('favorites.id'))
-    films_id = Column(Integer, ForeignKey('films.id'))
     name = Column(String(75), nullable=False)
     birth_year = Column(String(25), nullable=False)
     gender = Column(String(15), nullable=False)
@@ -44,13 +39,13 @@ class People(Base):
     species = Column(String(100), nullable=False)
     starships = Column(String(500), nullable=False)
     vehicles = Column(String(100), nullable=False)
+    favorites = relationship('Favorites', backref= 'people')
+    people_films = relationship('Films', backref= 'people')
 
 class Vehicles(Base):
     __tablename__ = 'vehicles'
 
     id = Column(Integer, primary_key=True)
-    favorites_id = Column(Integer, ForeignKey('favorites.id'))
-    films_id = Column(Integer, ForeignKey('films.id'))
     name = Column(String(75), nullable=False)
     max_atmosphering_speed = Column(String(25), nullable=False)
     crew = Column(String(25), nullable=False)
@@ -67,13 +62,13 @@ class Vehicles(Base):
     edited = Column(String(100), nullable=False)
     url = Column(String(500), nullable=False)
     films = Column(String(500), nullable=False)
+    favorites = relationship('Favorites', backref= 'vehicles')
+    vehicles_films = relationship('Films', backref= 'vehicles')
 
 class Planets(Base):
     __tablename__ = 'planets'
 
     id = Column(Integer, primary_key=True)
-    favorites_id = Column(Integer, ForeignKey('favorites.id'))
-    films_id = Column(Integer, ForeignKey('films.id'))
     climate = Column(String(75), nullable=False)
     created = Column(String(75), nullable=False)
     diameter = Column(String(75), nullable=False)
@@ -87,15 +82,20 @@ class Planets(Base):
     terrain = Column(String(75), nullable=False)
     url = Column(String(500), nullable=False)
     films = Column(String(500), nullable=False)
+    favorites = relationship('Favorites', backref= 'planets')
+    planets_films = relationship('Films', backref= 'planets')
 
 class Favorites(Base):
     __tablename__ = 'favorites'
 
     id = Column(Integer, primary_key=True)
-    user = relationship('User', backref= 'favorites')
-    people = relationship('People', backref= 'favorites')
-    vehicles = relationship('Vehicles', backref= 'favorites')
-    planets = relationship('Planets', backref= 'favorites')
+    user_id = Column(Integer, ForeignKey('user.id'))
+    people_id = Column(Integer, ForeignKey('people.id'))
+    vehicles_id = Column(Integer, ForeignKey('vehicles.id'))
+    planets_id = Column(Integer, ForeignKey('planets.id'))
+    films_id = Column(Integer, ForeignKey('films.id'))
+    species_id = Column(Integer, ForeignKey('species.id'))
+    starships_id = Column(Integer, ForeignKey('starships.id'))
 
 class Films(Base):
     __tablename__='films'
@@ -115,17 +115,17 @@ class Films(Base):
     title = Column(String(150), nullable=False)
     url = Column(String(500), nullable=False)
     vehicles = Column(String(250), nullable=False)
-    people_films = relationship('People', backref= 'films')
-    vehicles_films = relationship('Vehicles', backref= 'films')
-    planets_films = relationship('Planets', backref= 'films')
-    starships_films = relationship('Starships', backref= 'films')
-    species_films = relationship('Species', backref= 'films')
+    people_id = Column(Integer, ForeignKey('people.id'))
+    vehicles_id = Column(Integer, ForeignKey('vehicles.id'))
+    planets_id = Column(Integer, ForeignKey('planets.id'))
+    species_id = Column(Integer, ForeignKey('species.id'))
+    starships_id = Column(Integer, ForeignKey('starships.id'))
+    favorites_id = relationship('Favorites', backref= 'films')
 
 class Starships(Base):
     __tablename__='starships'
 
     id = Column(Integer, primary_key=True)
-    films_id = Column(Integer, ForeignKey('films.id'))
     MGLT = Column(String(25), nullable=False)
     cargo_capacity = Column(String(50), nullable=False)
     consumables = Column(String(25), nullable=False)
@@ -144,13 +144,14 @@ class Starships(Base):
     pilots = Column(String(100), nullable=False)
     starship_class = Column(String(150), nullable=False)
     url = Column(String(500), nullable=False)
+    starships_films = relationship('Films', backref= 'starships')
+    favorites = relationship('Favorites', backref= 'starships')
 
 
 class Species(Base):
     __tablename__='species'
 
     id = Column(Integer, primary_key=True)
-    films_id = Column(Integer, ForeignKey('films.id'))
     average_height = Column(String(25), nullable=False)
     average_lifespan = Column(String(25), nullable=False)
     classification = Column(String(15), nullable=False)
@@ -166,6 +167,8 @@ class Species(Base):
     films = Column(String(100), nullable=False)
     skin_colors = Column(String(25), nullable=False)
     url = Column(String(500), nullable=False)
+    species_films = relationship('Films', backref= 'species')
+    favorites = relationship('Favorites', backref= 'species')
 
 
 ## Draw from SQLAlchemy base
